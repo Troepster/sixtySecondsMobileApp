@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="16097" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="ipad9_7" orientation="portrait" layout="splitview1_3" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="407" height="885"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashIcon" translatesAutoresizingMaskIntoConstraints="NO" id="coy-I8-StB">
+                    <rect key="frame" x="0.0" y="0.0" width="407" height="885"/>
+                </imageView>
+            </subviews>
+            <color key="backgroundColor" red="0.12941176470588234" green="0.39215686274509803" blue="0.6470588235294118" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="coy-I8-StB" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="86w-hd-Jn6"/>
+                <constraint firstItem="coy-I8-StB" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="9NW-8Q-eFs"/>
+                <constraint firstAttribute="bottom" secondItem="coy-I8-StB" secondAttribute="bottom" id="KRt-UT-5Zo"/>
+                <constraint firstItem="coy-I8-StB" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="lJO-1e-QS0"/>
+                <constraint firstAttribute="trailing" secondItem="coy-I8-StB" secondAttribute="trailing" id="prT-4k-Oef"/>
+                <constraint firstItem="coy-I8-StB" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="sGE-Iu-4mt"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="494.92753623188412" y="116.18303571428571"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="SplashIcon" width="1242" height="2436"/>
+    </resources>
+</document>
