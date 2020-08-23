@@ -60,6 +60,13 @@ const LoginStandard = (props: Props) => {
                   >
                     Sign In
                   </Button>
+                  <View style={{height: 30}} />
+                  {/*// @ts-ignore*/}
+                  <Button mode="contained" onPress={() => navigation.navigate(routes.AudioPlayer)} contentStyle={{height: 50}}
+                          labelStyle={{fontFamily: fonts.PoppinsSemiBold, fontSize: 16, fontWeight: '600', lineHeight: 25, color: '#ffffff'}}
+                  >
+                    Audio Player/Tester
+                  </Button>
                 </View>
               </View>
               {/*<View style={{marginTop: 20, flexDirection: 'row'}}>*/}

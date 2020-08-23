@@ -5,8 +5,11 @@ import Home from './screens/home';
 import LoginStandard from './screens/loginStandard';
 import {routes} from './enums/routes';
 import {TaskScreen} from './screens/taskScreen';
+import Player from './screens/audioPlayer/Player';
+// import Recorder from './screens/audioPlayer/recorder/Recorder';
 
 export type RootStackParamList = {
+  [routes.AudioPlayer]: undefined;
   [routes.LoginStandard]: undefined;
   [routes.LoginSocial]: undefined;
   [routes.Home]: undefined;
@@ -19,6 +22,20 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <RootStack.Navigator initialRouteName={routes.LoginStandard}>
+        <RootStack.Screen
+          name={routes.AudioPlayer}
+          component={Player}
+          options={{
+            headerShown: false
+          }}
+        />
+        {/*<RootStack.Screen*/}
+        {/*  name={routes.Recorder}*/}
+        {/*  component={Recorder}*/}
+        {/*  options={{*/}
+        {/*    headerShown: false*/}
+        {/*  }}*/}
+        {/*/>*/}
         <RootStack.Screen
           name={routes.LoginStandard}
           component={LoginStandard}
