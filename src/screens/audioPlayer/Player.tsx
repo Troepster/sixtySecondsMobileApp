@@ -27,14 +27,21 @@ const Player = (props: Props) => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [soundFile, setSoundFile] = useState<string>('');
+  const [recordingTime, setRecordingTime] = useState<number>(0);
   AudioRecord.init(options);
+
   AudioRecord.on('data', data => {
-    console.log(data);
+    // console.log(Buffer.from(data, 'base64'));
     // base64-encoded audio data chunks
   });
 
   const handleRecord = useCallback(() => {
-    !isRecording && AudioRecord.start();
+    if (!isRecording) {
+      AudioRecord.start();
+
+    } else {
+
+    }
     isRecording && AudioRecord.stop().then(onfulfilled => {
       console.log(onfulfilled);
       setSoundFile(onfulfilled);
@@ -46,6 +53,7 @@ const Player = (props: Props) => {
     setIsPlaying(true);
     Sound.setCategory('Playback');
     console.log(Sound.DOCUMENT);
+
     const recording = new Sound('test.wav', Sound.DOCUMENT, (error) => {
       if (error) {
         setIsPlaying(false);
