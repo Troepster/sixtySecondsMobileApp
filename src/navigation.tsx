@@ -5,7 +5,7 @@ import Home from './screens/home';
 import LoginStandard from './screens/loginStandard';
 import {routes} from './enums/routes';
 import {TaskScreen} from './screens/taskScreen';
-import Player from './screens/audioPlayer/Player';
+import PlayerOld from './screens/audioPlayer/Player';
 // import Recorder from './screens/audioPlayer/recorder/Recorder';
 
 export type RootStackParamList = {
@@ -24,7 +24,7 @@ const Navigation = () => {
       <RootStack.Navigator initialRouteName={routes.LoginStandard}>
         <RootStack.Screen
           name={routes.AudioPlayer}
-          component={Player}
+          component={PlayerOld}
           options={{
             headerShown: false
           }}
