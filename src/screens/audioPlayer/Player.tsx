@@ -14,6 +14,7 @@ import {
   AVEncodingOption,
 } from 'react-native-audio-recorder-player';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
+import {noNotchHeight, notchHeightIos} from '../../constants/constants';
 
 interface Props {
   navigation: StackNavigationProp<any>;
@@ -145,7 +146,10 @@ const PlayerOld = (props: Props) => {
       <StatusBar translucent barStyle="dark-content" />
       <View style={{flex: 1, backgroundColor: '#e1eefe'}}>
         <View
-          style={{backgroundColor: '#2F8DDE', height: hasNotch() ? 44 : 20}}
+          style={{
+            backgroundColor: '#2F8DDE',
+            height: hasNotch() ? notchHeightIos : noNotchHeight,
+          }}
         />
         <SafeAreaView style={{flex: 1}}>
           <View

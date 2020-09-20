@@ -15,48 +15,44 @@ Text.defaultProps = Text.defaultProps || {};
 Text.defaultProps.allowFontScaling = false;
 
 moment.updateLocale('en', {
-  relativeTime : {
-    past: function(input) {
-      return input === 'just now'
-        ? input
-        : input + ' ago'
+  relativeTime: {
+    past: function (input) {
+      return input === 'just now' ? input : input + ' ago';
     },
-    s  : 'just now',
-    future: "in %s",
-    ss : '%d seconds',
-    m:  "a minute",
-    mm: "%d minutes",
-    h:  "an hour",
-    hh: "%d hours",
-    d:  "a day",
-    dd: "%d days",
-    M:  "a month",
-    MM: "%d months",
-    y:  "a year",
-    yy: "%d years"
-  }
+    s: 'just now',
+    future: 'in %s',
+    ss: '%d seconds',
+    m: 'a minute',
+    mm: '%d minutes',
+    h: 'an hour',
+    hh: '%d hours',
+    d: 'a day',
+    dd: '%d days',
+    M: 'a month',
+    MM: '%d months',
+    y: 'a year',
+    yy: '%d years',
+  },
 });
 
 const App = () => {
-
   useEffect(() => {
     setTimeout(() => {
       SplashScreen.hide();
     }, 0);
   }, []);
   return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-          <PaperProvider theme={defaultTheme}>
+    <PaperProvider theme={defaultTheme}>
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
           <Navigation />
-        </PaperProvider>
-      </PersistGate>
-    </Provider>
+        </PersistGate>
+      </Provider>
+    </PaperProvider>
   );
 };
 
 export default App;
-
 
 /* Fonts
 

@@ -13,8 +13,8 @@ export type RootStackParamList = {
   [routes.LoginStandard]: undefined;
   [routes.LoginSocial]: undefined;
   [routes.Home]: undefined;
-  [routes.TaskScreen]: { id: string };
-}
+  [routes.TaskScreen]: {id: string};
+};
 
 const RootStack = createStackNavigator<RootStackParamList>();
 
@@ -26,7 +26,7 @@ const Navigation = () => {
           name={routes.AudioPlayer}
           component={PlayerOld}
           options={{
-            headerShown: false
+            headerShown: false,
           }}
         />
         {/*<RootStack.Screen*/}
@@ -40,27 +40,27 @@ const Navigation = () => {
           name={routes.LoginStandard}
           component={LoginStandard}
           options={{
-            headerShown: false
+            headerShown: false,
           }}
         />
         <RootStack.Screen
           name={routes.Home}
           component={Home}
           options={{
-            headerShown: false
+            headerShown: false,
           }}
         />
         <RootStack.Screen
           name={routes.TaskScreen}
           component={TaskScreen}
           options={{
-            headerShown: false
+            headerShown: false,
           }}
           initialParams={{}}
         />
       </RootStack.Navigator>
     </NavigationContainer>
-  )
-}
+  );
+};
 
 export default Navigation;

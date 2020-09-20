@@ -18,6 +18,7 @@ import Prepare from './prepare';
 import Deliver from './deliver';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {SalesSteps} from '../../enums/app';
+import {noNotchHeight, notchHeightIos} from '../../constants/constants';
 
 interface Props {
   navigation: StackNavigationProp<RootStackParamList, routes.TaskScreen>;
@@ -32,9 +33,9 @@ export enum bottomTabs {
 export type TaskRef = React.MutableRefObject<Task>;
 
 export type BottomTabsParamList = {
-  [bottomTabs.PREPARE]: { id: string, taskRef: TaskRef };
-  [bottomTabs.DELIVER]: { id: string, taskRef: TaskRef };
-}
+  [bottomTabs.PREPARE]: {id: string; taskRef: TaskRef};
+  [bottomTabs.DELIVER]: {id: string; taskRef: TaskRef};
+};
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();
 
@@ -56,27 +57,34 @@ export interface TaskStateProps {
 }
 
 const TaskScreen = (props: Props) => {
+  console.log('here');
   const {navigation, route} = props;
   const dispatch = useDispatch();
-  const task = useSelector<IAppState, Task | null | undefined>(state => {
-    return route.params.id ? state.tasks.find(task => task.id === route.params.id) : null
+  const task = useSelector<IAppState, Task | null | undefined>((state) => {
+    return route.params.id
+      ? state.tasks.find((task) => task.id === route.params.id)
+      : null;
   });
   const [initialValues, setInitialValues] = useState({
     title: task?.scenario.title || '',
     audience: task?.scenario.audience || '',
     situation: task?.scenario.situation || '',
-    salesSteps: task?.scenario.salesSteps || {} as SalesStepsDetails,
-    script: task?.script || {} as TaskScript,
+    salesSteps: task?.scenario.salesSteps || ({} as SalesStepsDetails),
+    script: task?.script || ({} as TaskScript),
     keywords: task?.scenario.keywords || '',
     allowSalesSteps: !!task?.scenario.allowSalesSteps,
   });
   const [title, setTitle] = useState<string>(initialValues.title);
   const [audience, setAudience] = useState<string>(initialValues.audience);
   const [situation, setSituation] = useState<string>(initialValues.situation);
-  const [salesSteps, setSalesSteps] = useState<SalesStepsDetails>(initialValues.salesSteps);
+  const [salesSteps, setSalesSteps] = useState<SalesStepsDetails>(
+    initialValues.salesSteps,
+  );
   const [script, setScript] = useState<TaskScript>(initialValues.script);
   const [keywords, setKeywords] = useState<string>(initialValues.keywords);
-  const [allowSalesSteps, setAllowSalesSteps] = useState<boolean>(initialValues.allowSalesSteps);
+  const [allowSalesSteps, setAllowSalesSteps] = useState<boolean>(
+    initialValues.allowSalesSteps,
+  );
   const [showConfirmSave, setShowConfirmSave] = useState<boolean>(false);
 
   const taskStateProps: TaskStateProps = {
@@ -93,83 +101,136 @@ const TaskScreen = (props: Props) => {
     keywords,
     setKeywords,
     allowSalesSteps,
-    setAllowSalesSteps
-  }
+    setAllowSalesSteps,
+  };
 
-  const saveTask = useCallback((goBack:boolean) => ()=> {
-    const rootDispatcher = new RootDispatcher(dispatch);
-    const createDate = moment().toISOString();
-    const tmpTask = {
-      id: route.params.id || uuid(),
-      scenario: {
-        audience,
-        situation,
-        title,
-        keywords,
-        salesSteps,
-        allowSalesSteps
-      },
-      script: {...script},
-      scenarioCreated: task?.scenarioCreated || createDate,
-      scenarioUpdated: createDate
-    }
-    route.params.id ? rootDispatcher.updateTask(tmpTask) : rootDispatcher.addTask(tmpTask);
-    setInitialValues({
-      title: title,
-      audience: audience,
-      situation: situation,
-      keywords: keywords,
-      script: {...script},
-      allowSalesSteps: allowSalesSteps,
-      salesSteps: {...salesSteps}
-    })
-    goBack && navigation.goBack();
-  }, [audience, keywords, situation, title, salesSteps, allowSalesSteps, script]);
+  const saveTask = useCallback(
+    (goBack: boolean) => () => {
+      const rootDispatcher = new RootDispatcher(dispatch);
+      const createDate = moment().toISOString();
+      const tmpTask = {
+        id: route.params.id || uuid(),
+        scenario: {
+          audience,
+          situation,
+          title,
+          keywords,
+          salesSteps,
+          allowSalesSteps,
+        },
+        script: {...script},
+        scenarioCreated: task?.scenarioCreated || createDate,
+        scenarioUpdated: createDate,
+      };
+      route.params.id
+        ? rootDispatcher.updateTask(tmpTask)
+        : rootDispatcher.addTask(tmpTask);
+      setInitialValues({
+        title: title,
+        audience: audience,
+        situation: situation,
+        keywords: keywords,
+        script: {...script},
+        allowSalesSteps: allowSalesSteps,
+        salesSteps: {...salesSteps},
+      });
+      goBack && navigation.goBack();
+    },
+    [audience, keywords, situation, title, salesSteps, allowSalesSteps, script],
+  );
   // @ts-ignore
-  const isValid = Boolean(title && audience && situation && keywords && (!allowSalesSteps || (allowSalesSteps && Object.keys(salesSteps).filter(step => !!salesSteps[step]).length !== 0)));
+  const isValid = Boolean(
+    title &&
+      audience &&
+      situation &&
+      keywords &&
+      (!allowSalesSteps ||
+        (allowSalesSteps &&
+          Object.keys(salesSteps).filter((step) => !!salesSteps[step])
+            .length !== 0)),
+  );
   const isDirty = Boolean(
     title !== initialValues.title ||
-    audience !== initialValues.audience ||
-    situation !== initialValues.situation ||
-    keywords !== initialValues.keywords ||
-    allowSalesSteps !== initialValues.allowSalesSteps ||
-    script[SalesSteps.CLOSE_AND_GAIN_COMMITMENT] !== initialValues.script[SalesSteps.CLOSE_AND_GAIN_COMMITMENT] ||
-    script[SalesSteps.GENERAL] !== initialValues.script[SalesSteps.GENERAL] ||
-    script[SalesSteps.DEAL_WITH_ISSUES] !== initialValues.script[SalesSteps.DEAL_WITH_ISSUES] ||
-    script[SalesSteps.OPEN_CALL] !== initialValues.script[SalesSteps.OPEN_CALL] ||
-    script[SalesSteps.PRESENT_SOLUTIONS] !== initialValues.script[SalesSteps.PRESENT_SOLUTIONS] ||
-    script[SalesSteps.PROBE_WITH_QUESTIONS] !== initialValues.script[SalesSteps.PROBE_WITH_QUESTIONS] ||
-    salesSteps[SalesSteps.CLOSE_AND_GAIN_COMMITMENT] !== initialValues.salesSteps[SalesSteps.CLOSE_AND_GAIN_COMMITMENT] ||
-    salesSteps[SalesSteps.GENERAL] !== initialValues.salesSteps[SalesSteps.GENERAL] ||
-    salesSteps[SalesSteps.DEAL_WITH_ISSUES] !== initialValues.salesSteps[SalesSteps.DEAL_WITH_ISSUES] ||
-    salesSteps[SalesSteps.OPEN_CALL] !== initialValues.salesSteps[SalesSteps.OPEN_CALL] ||
-    salesSteps[SalesSteps.PRESENT_SOLUTIONS] !== initialValues.salesSteps[SalesSteps.PRESENT_SOLUTIONS] ||
-    salesSteps[SalesSteps.PROBE_WITH_QUESTIONS] !== initialValues.salesSteps[SalesSteps.PROBE_WITH_QUESTIONS]
+      audience !== initialValues.audience ||
+      situation !== initialValues.situation ||
+      keywords !== initialValues.keywords ||
+      allowSalesSteps !== initialValues.allowSalesSteps ||
+      script[SalesSteps.CLOSE_AND_GAIN_COMMITMENT] !==
+        initialValues.script[SalesSteps.CLOSE_AND_GAIN_COMMITMENT] ||
+      script[SalesSteps.GENERAL] !== initialValues.script[SalesSteps.GENERAL] ||
+      script[SalesSteps.DEAL_WITH_ISSUES] !==
+        initialValues.script[SalesSteps.DEAL_WITH_ISSUES] ||
+      script[SalesSteps.OPEN_CALL] !==
+        initialValues.script[SalesSteps.OPEN_CALL] ||
+      script[SalesSteps.PRESENT_SOLUTIONS] !==
+        initialValues.script[SalesSteps.PRESENT_SOLUTIONS] ||
+      script[SalesSteps.PROBE_WITH_QUESTIONS] !==
+        initialValues.script[SalesSteps.PROBE_WITH_QUESTIONS] ||
+      salesSteps[SalesSteps.CLOSE_AND_GAIN_COMMITMENT] !==
+        initialValues.salesSteps[SalesSteps.CLOSE_AND_GAIN_COMMITMENT] ||
+      salesSteps[SalesSteps.GENERAL] !==
+        initialValues.salesSteps[SalesSteps.GENERAL] ||
+      salesSteps[SalesSteps.DEAL_WITH_ISSUES] !==
+        initialValues.salesSteps[SalesSteps.DEAL_WITH_ISSUES] ||
+      salesSteps[SalesSteps.OPEN_CALL] !==
+        initialValues.salesSteps[SalesSteps.OPEN_CALL] ||
+      salesSteps[SalesSteps.PRESENT_SOLUTIONS] !==
+        initialValues.salesSteps[SalesSteps.PRESENT_SOLUTIONS] ||
+      salesSteps[SalesSteps.PROBE_WITH_QUESTIONS] !==
+        initialValues.salesSteps[SalesSteps.PROBE_WITH_QUESTIONS],
   );
-  const canRehearse = Object.keys(script).filter(step => !!script[step as SalesSteps]).length !== 0;
+  const canRehearse =
+    Object.keys(script).filter((step) => !!script[step as SalesSteps])
+      .length !== 0;
   const hideSalesSteps = () => {
     setShowConfirmSave(false);
-  }
+  };
   const handleClose = () => {
     isDirty && isValid ? setShowConfirmSave(true) : navigation.goBack();
-  }
+  };
   const handleCloseConfirmation = () => {
     setShowConfirmSave(false);
     navigation.goBack();
-  }
+  };
 
   return (
     <>
-      <View style={{backgroundColor: '#2F8DDE', height: hasNotch() ? 44 : 20}} />
-      <View style={{backgroundColor: '#2F8DDE', height: 60, flexDirection: 'row', alignItems: 'center'}}>
+      <View
+        style={{
+          backgroundColor: '#2F8DDE',
+          height: hasNotch() ? notchHeightIos : noNotchHeight,
+        }}
+      />
+      <View
+        style={{
+          backgroundColor: '#2F8DDE',
+          height: 60,
+          flexDirection: 'row',
+          alignItems: 'center',
+        }}>
         {/*// @ts-ignore*/}
-        <Button onPress={handleClose} color={Colors.white}>Close</Button>
+        <Button onPress={handleClose} color={Colors.white}>
+          Close
+        </Button>
         <View style={{flex: 1, alignItems: 'center'}}>
-          <Text style={{fontFamily: fonts.PoppinsMedium, fontSize: 21, lineHeight: 31, color: Colors.white}}>{task?.scenario.title || 'New Task'}</Text>
+          <Text
+            style={{
+              fontFamily: fonts.PoppinsMedium,
+              fontSize: 21,
+              lineHeight: 31,
+              color: Colors.white,
+            }}>
+            {task?.scenario.title || 'New Task'}
+          </Text>
         </View>
         {/*<Button disabled={!isValid} onPress={() => saveTask()} color={Colors.white}>{task ? 'Update' : 'Save'}</Button>*/}
         {/*// @ts-ignore*/}
-        <Button disabled={!isValid || !isDirty} onPress={saveTask(false)} color={Colors.white}>Save</Button>
+        <Button
+          disabled={!isValid || !isDirty}
+          onPress={saveTask(false)}
+          color={Colors.white}>
+          Save
+        </Button>
       </View>
       <Tab.Navigator
         initialRouteName={bottomTabs.PREPARE}
@@ -178,52 +239,94 @@ const TaskScreen = (props: Props) => {
             top: 5,
             textTransform: 'uppercase',
             fontFamily: fonts.PoppinsRegular,
-            fontSize: 13, lineHeight: 18,
+            fontSize: 13,
+            lineHeight: 18,
           },
-          iconStyle: {}
+          iconStyle: {},
         }}
         screenOptions={({route}) => ({
           tabBarButton: (props) => {
             const {children, onPress, onLongPress, to} = props;
             return (
-              <TouchableOpacity disabled={to?.includes('TaskScreen/Deliver')} onPress={onPress} onLongPress={onLongPress} style={{flex: 1, paddingTop: 10, opacity: to?.includes('TaskScreen/Deliver') ? .5 : 1}}>
+              <TouchableOpacity
+                disabled={to?.includes('TaskScreen/Deliver')}
+                onPress={onPress}
+                onLongPress={onLongPress}
+                style={{
+                  flex: 1,
+                  paddingTop: 10,
+                  opacity: to?.includes('TaskScreen/Deliver') ? 0.5 : 1,
+                }}>
                 {children}
               </TouchableOpacity>
-            )
+            );
           },
           tabBarIcon: ({focused}) => {
             return (
               <>
-                <MaterialCommunityIcons style={{color: colors.activeIcon}} name={route.name === bottomTabs.PREPARE ? 'pencil' : 'video'} size={20} />
-                {focused && <View style={{height: 2, position: 'absolute', top: -10, backgroundColor: colors.activeIcon, width: '100%'}} />}
+                <MaterialCommunityIcons
+                  style={{color: colors.activeIcon}}
+                  name={route.name === bottomTabs.PREPARE ? 'pencil' : 'video'}
+                  size={20}
+                />
+                {focused && (
+                  <View
+                    style={{
+                      height: 2,
+                      position: 'absolute',
+                      top: -10,
+                      backgroundColor: colors.activeIcon,
+                      width: '100%',
+                    }}
+                  />
+                )}
               </>
             );
           },
-        })}
-      >
-        <Tab.Screen name={bottomTabs.PREPARE} initialParams={{id: route.params.id}}>
-          {(props) => <Prepare {...props} {...taskStateProps} isValid={isValid} canRehearse={canRehearse} />}
+        })}>
+        <Tab.Screen
+          name={bottomTabs.PREPARE}
+          initialParams={{id: route.params.id}}>
+          {(props) => (
+            <Prepare
+              {...props}
+              {...taskStateProps}
+              isValid={isValid}
+              canRehearse={canRehearse}
+            />
+          )}
         </Tab.Screen>
 
-        <Tab.Screen name={bottomTabs.DELIVER} component={Deliver} initialParams={{id: route.params.id}} />
+        <Tab.Screen
+          name={bottomTabs.DELIVER}
+          component={Deliver}
+          initialParams={{id: route.params.id}}
+        />
       </Tab.Navigator>
       <Portal>
         <Dialog visible={showConfirmSave} onDismiss={hideSalesSteps}>
           {/*// @ts-ignore*/}
           <Dialog.Content>
             {/*// @ts-ignore*/}
-            <Paragraph>You've got unsaved changes, would you like to save them or discard them?</Paragraph>
+            <Paragraph>
+              You've got unsaved changes, would you like to save them or discard
+              them?
+            </Paragraph>
           </Dialog.Content>
           <Dialog.Actions>
             {/*// @ts-ignore*/}
-            <Button style={{paddingHorizontal: 10}} onPress={handleCloseConfirmation}>Discard</Button>
+            <Button
+              style={{paddingHorizontal: 10}}
+              onPress={handleCloseConfirmation}>
+              Discard
+            </Button>
             {/*// @ts-ignore*/}
             <Button onPress={saveTask(true)}>Save</Button>
           </Dialog.Actions>
         </Dialog>
       </Portal>
     </>
-  )
-}
+  );
+};
 
 export default TaskScreen;

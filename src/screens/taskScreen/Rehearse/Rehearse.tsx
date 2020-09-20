@@ -10,25 +10,29 @@ import {
 import {StackNavigationProp} from '@react-navigation/stack';
 import {MaterialIcons} from '../../../theme/icon';
 import {RootStackParamList} from '../../../navigation';
-import {RouteProp, useIsFocused} from '@react-navigation/native';
+import {RouteProp, useIsFocused, useNavigation} from '@react-navigation/native';
 import {routes} from '../../../enums/routes';
-import {Modal, Portal} from 'react-native-paper';
+import {Portal} from 'react-native-paper';
 import {TaskStateProps} from '../taskScreen';
 import {topTabs, TopTabsParamList} from '../prepare';
 import LinearGradient from 'react-native-linear-gradient';
 import {TaskScript} from '../../../types';
-import {StyledTouchableOpacityMainArea} from './RehearseStyledComponents';
+import {
+  StyledTouchableOpacityMainArea,
+  StyledModal,
+} from './RehearseStyledComponents';
 import ControllerRow from './ControllerRow';
+import {hasNotch} from 'react-native-device-info';
+import {noNotchHeight, notchHeightIos} from '../../../constants/constants';
 
 interface Props extends TaskStateProps {
-  navigation: StackNavigationProp<RootStackParamList, routes.TaskScreen>;
   route: RouteProp<TopTabsParamList, topTabs.REHEARSE>;
 }
 
 const speedValues = [60, 50, 40, 30, 20, 12, 8, 6, 4, 2];
 
 const Rehearse = (props: Props) => {
-  const {navigation, script} = props;
+  const {script} = props;
   const [play, setPlay] = useState<boolean>(false);
   const [height, setHeight] = useState<number>(0);
   const [speed, setSpeed] = useState<number>(5);
@@ -38,6 +42,10 @@ const Rehearse = (props: Props) => {
   >('down');
   const isFocused = useIsFocused();
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const navigation: StackNavigationProp<
+    RootStackParamList,
+    routes.TaskScreen
+  > = useNavigation();
 
   const scrollUp = (speed: number, height: number) => {
     // @ts-ignore
@@ -90,10 +98,9 @@ const Rehearse = (props: Props) => {
     <>
       <View style={{flex: 1, backgroundColor: '#E1EEFE'}}>
         <Portal>
-          <Modal visible={isFocused} onDismiss={() => navigation.goBack()}>
+          <StyledModal visible={isFocused} onDismiss={() => navigation.pop()}>
             <StyledTouchableOpacityMainArea activeOpacity={1}>
-              <View
-                style={{overflow: 'visible', flex: 1, backgroundColor: '#fff'}}>
+              <View>
                 <Animated.View
                   onLayout={onViewLayout}
                   style={{padding: 30, top: fadeAnim, position: 'absolute'}}>
@@ -117,18 +124,18 @@ const Rehearse = (props: Props) => {
               <View
                 style={{
                   backgroundColor: '#fff',
-                  height: 30,
-                  top: 0,
+                  height: hasNotch() ? notchHeightIos : noNotchHeight,
+                  top: (hasNotch() ? notchHeightIos : noNotchHeight) * -1,
                   position: 'absolute',
                   width: '100%',
                 }}
               />
               <LinearGradient
                 pointerEvents="none"
-                colors={['#FFFFFF', 'rgba(255,255,255,0)']}
+                colors={['#fff', 'rgba(255,255,255,0)']}
                 style={{
                   position: 'absolute',
-                  top: 30,
+                  top: 0,
                   flex: 1,
                   width: '100%',
                   height: 30,
@@ -184,7 +191,7 @@ const Rehearse = (props: Props) => {
                 <MaterialIcons color="#243F68" name="highlight-off" size={20} />
               </TouchableOpacity>
             </StyledTouchableOpacityMainArea>
-          </Modal>
+          </StyledModal>
         </Portal>
       </View>
     </>
