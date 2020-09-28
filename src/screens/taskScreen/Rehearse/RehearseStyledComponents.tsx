@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import {Modal, Pressable} from 'react-native';
+import {Animated, Modal} from 'react-native';
 import {hasNotch} from 'react-native-device-info';
 import {noNotchHeight, notchHeightIos} from '../../../constants/constants';
 
@@ -18,14 +18,19 @@ export const StyledTouchableOpacityMainArea = styled.TouchableOpacity`
 `;
 
 export const StyledRecordButtonContainer = styled.View`
-  position: absolute;
-  width: 100%;
+  flex: 1;
+  height: 120px;
+  align-items: center;
+  justify-content: center;
+`;
+export const StyledSkipBackwardsContainer = styled.View`
+  flex: 1;
   height: 120px;
   align-items: center;
   justify-content: center;
 `;
 
-export const StyledRecordButtonOuter = styled(Pressable)`
+export const StyledRecordButtonOuter = styled.TouchableOpacity`
   background-color: #333;
   height: 80px;
   width: 80px;
@@ -33,9 +38,16 @@ export const StyledRecordButtonOuter = styled(Pressable)`
   align-items: center;
   justify-content: center;
 `;
-export const StyledRecordButtonInner = styled(Pressable)`
-  background-color: red;
-  width: 50px;
-  height: 50px;
+export const StyledSkipBackwardsButtonOuter = styled.TouchableOpacity`
+  height: 80px;
+  width: 80px;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: center;
+`;
+export const StyledRecordButtonInner = styled(Animated.View)`
+  background-color: #ff4800;
+  width: 40px;
+  height: 40px;
   border-radius: 100px;
 `;

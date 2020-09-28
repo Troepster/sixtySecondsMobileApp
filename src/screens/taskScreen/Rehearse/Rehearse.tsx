@@ -1,4 +1,4 @@
-import React, {ComponentProps, useRef, useState} from 'react';
+import React, {ComponentProps, useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -21,7 +21,7 @@ import {
   StyledTouchableOpacityMainArea,
   StyledModal,
 } from './RehearseStyledComponents';
-import ControllerRow from './ControllerRow';
+import ControllerRow from './ControllerRow/ControllerRow';
 import {hasNotch} from 'react-native-device-info';
 import {noNotchHeight, notchHeightIos} from '../../../constants/constants';
 
@@ -37,6 +37,7 @@ const Rehearse = (props: Props) => {
   const [height, setHeight] = useState<number>(0);
   const [speed, setSpeed] = useState<number>(5);
   const [fontSize, setFontSize] = useState<number>(50);
+  const [currentPosition, setCurrentPosition] = useState<number>(0);
   const [direction, setDirection] = useState<
     ComponentProps<typeof ControllerRow>['direction']
   >('down');
@@ -94,6 +95,14 @@ const Rehearse = (props: Props) => {
   const onViewLayout = ({nativeEvent: {layout}}: LayoutChangeEvent) => {
     setHeight(layout.height);
   };
+  useEffect(() => {
+    fadeAnim.addListener(({value}) => {
+      setCurrentPosition(value);
+    });
+    return () => {
+      fadeAnim.removeAllListeners();
+    };
+  }, [fadeAnim]);
   return (
     <>
       <View style={{flex: 1, backgroundColor: '#E1EEFE'}}>
@@ -166,6 +175,8 @@ const Rehearse = (props: Props) => {
               <ControllerRow
                 speed={speed}
                 setSpeed={setSpeed}
+                currentPosition={currentPosition}
+                setCurrentPosition={setCurrentPosition}
                 play={play}
                 direction={direction}
                 setDirection={setDirection}
